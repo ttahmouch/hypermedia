@@ -1,6 +1,7 @@
-# Introduction
+Hypermedia
+==========
 
-This page offers a brief overview of eXtensible Hypermedia Notation (XHN). This module's purpose is to allow for the
+This page offers a brief overview of the Hypermedia module. This module's purpose is to allow for the
 encoding and decoding of hypermedia in a media type agnostic fashion with the help of the Open/Closed Principle.
 
 ## Affordance(s) and Input
@@ -233,3 +234,25 @@ representations; self-descriptive messages; and, hypermedia as the engine of app
 In the context of this application, a Message is a collection of "action possibilities" from a Resource-Oriented
 Architecture web API that facilitates the fourth interface constraint of REST. The "action possibilities" are Affordance
 identifier Strings.
+
+## Installation
+
+    npm install hypermedia --save
+
+## Usage
+
+Todo: No usage examples just yet.
+
+## Tests
+
+No unit tests are currently present. Eventually:
+
+    npm test
+
+## Contributing
+
+In lieu of a formal style guideline, take care to maintain the existing coding style.
+
+## Release History
+
++ 0.0.1 Initial release
