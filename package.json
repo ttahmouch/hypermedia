@@ -1,40 +1,40 @@
 {
-    "name": "hypermedia",
-    "description": "Library that allows for the programmatic modeling, encoding, and decoding of hypermedia affordances, and for the programmatic transformation of Hypermedia API (HAPI) DSLs into live HTTP servers.",
-    "author": "Tony Tahmouch <ttahmouch@gmail.com>",
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "https://github.com/ttahmouch/hypermedia/blob/master/LICENSE.md"
-        }
-    ],
-    "version": "0.0.1",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo 'Error: no test specified' && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/ttahmouch/hypermedia.git"
-    },
-    "dependencies": {
-        "argo": "0.4.9",
-        "argo-url-router": "0.0.4",
-        "partly": "0.0.1"
-    },
-    "keywords": [
-        "affordance",
-        "affordances",
-        "argo",
-        "decoder",
-        "encoder",
-        "hapi",
-        "hypermedia",
-        "naval",
-        "rest",
-        "restful"
-    ],
-    "bugs": {
-        "url": "https://github.com/ttahmouch/hypermedia/issues"
+  "name": "hypermedia",
+  "description": "Library that allows for the programmatic modeling, encoding, and decoding of hypermedia affordances, and for the programmatic transformation of Hypermedia API (HAPI) DSLs into live HTTP servers.",
+  "author": "Tony Tahmouch <ttahmouch@gmail.com>",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/ttahmouch/hypermedia/blob/master/LICENSE.md"
     }
+  ],
+  "version": "0.0.2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ttahmouch/hypermedia.git"
+  },
+  "dependencies": {
+    "argo": "0.4.9",
+    "argo-url-router": "0.0.4",
+    "partly": "0.0.1"
+  },
+  "keywords": [
+    "affordance",
+    "affordances",
+    "argo",
+    "decoder",
+    "encoder",
+    "hapi",
+    "hypermedia",
+    "naval",
+    "rest",
+    "restful"
+  ],
+  "bugs": {
+    "url": "https://github.com/ttahmouch/hypermedia/issues"
+  }
 }
