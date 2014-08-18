@@ -21,6 +21,8 @@
      * representing the same data in multiple formats, "parallel" for parts intended to be viewed simultaneously,
      * and "digest" for multipart entities in which each part has a default type of "message/rfc822".
      *
+     * @see http://tools.ietf.org/html/rfc2046#page-4
+     *
      * @return {Multipart}
      * @constructor
      */
@@ -40,6 +42,8 @@
      * to be encapsulated without having to prescan the data.
      *
      * Every resulting boundary delimiter from this algorithm will be exactly 70 characters and will NOT end in a space.
+     *
+     * @see http://tools.ietf.org/html/rfc2046#page-22
      *
      * @return {string} representing the boundary delimiter.
      */
@@ -69,6 +73,8 @@
      * The only header fields that have defined meaning for body parts are those the names of which begin with
      * "Content-".  All other header fields may be ignored in body parts.
      *
+     * @see http://tools.ietf.org/html/rfc2046#page-18
+     *
      * @param part {Object} representing a body part.
      * @example
      * {
@@ -86,6 +92,23 @@
      *              }
      *             ]
      * }
+     *
+     * "Content-" header field names may be provided using any form of capitalization. They will be normalized to
+     * lowercase. Expect to access them with lowercase after using Multipart.decode() on an entity body.
+     *
+     * "Body" currently must be explicitly "Body" or "body". No other variations are supported. Case-sensitivity will
+     * hopefully be removed later. Expect to access the body with lowercase after using Multipart.decode() on an entity
+     * body.
+     *
+     * Any header field names may be provided as properties on an object as depicted in the example. They are not
+     * limited to "Content-" headers. However, no other header field names have defined semantic meaning within the
+     * context of a body part.
+     *
+     * Any body provided may be pre-encoded as a string, or a nested Multipart body defined as an array. The nesting may
+     * be infinite. Both are depicted above.
+     *
+     * Any nested Multipart body arrays should not define a boundary. It will be provided for them. In the example,
+     * 'content-type': 'multipart/parallel' is provided, and not 'content-type': 'multipart/parallel; boundary="gc0pJq'.
      *
      * @return {string} representing the body part.
      */
@@ -122,6 +145,8 @@
      * A body must contain one or more body parts, each preceded by a boundary delimiter line, and the last one
      * followed by a closing boundary delimiter line.
      *
+     * @see http://tools.ietf.org/html/rfc2046#page-17
+     *
      * @param parts {Array} representing a multipart body.
      * @example
      * [
@@ -145,14 +170,8 @@
      *  }
      * ]
      *
-     * - Any Multipart Body should be represented by an {Array} of {Object}s.
-     * - Any Body Part should be represented as an {Object} with arbitrary fields representing "Content-" headers.
-     * - Any Body Part should have a "Body" field representing an encoded body {string},
-     *   or a nested Multipart Body {Array}. The nesting can be infinite.
-     * - Any Body Part that is also a Multipart Body, as depicted above, need NOT provide a boundary. It will be
-     *   provided when encoding. Although, a Content-Type field MUST be provided.
-     *   - In other words, just supply this: Content-Type: multipart/mixed,
-     *                             not this: Content-Type: multipart/mixed; boundary="gc0pJq0M:08jU534c0p"
+     * All semantics defined in Multipart.part() apply.
+     * @see Multipart.part
      *
      * @param boundary {string} representing a boundary delimiter.
      * @see Multipart.boundary
@@ -319,12 +338,12 @@
     };
 
     /**
-     * JSON NAVigation Application Language ("NavAL") is a generic, hypermedia, media type which establishes conventions
+     * JSON Navigation Application Language ("NavAL") is a generic, hypermedia, media type which establishes conventions
      * for expressing hypermedia controls, such as links and forms, with JSON [RFC4627]. Web APIs may expose access to
      * their resources with NavAL. Clients of these APIs can select links and forms by their "relation" and traverse
-     * them in order to progress through the application. Clients do NOT need to know protocol semantics.
+     * them in order to progress through the application. Clients do not need to know protocol semantics.
      *
-     * NavAL ONLY focuses on hypermedia semantics. NavAL Web APIs may expose data with any media type. An accompanying
+     * NavAL focuses only on hypermedia semantics. NavAL Web APIs may expose data with any media type. An accompanying
      * media type, Multipart Nav-Data, must be used with NavAL to allow hypermedia semantics to accompany application
      * data semantics. Multipart Nav-Data will be defined in its own specification.
      *
@@ -341,8 +360,41 @@
      * @param hypermedia {Array} representing hypermedia controls.
      * @example
      * [
-     *   { "id": "entry", "method": "GET", "uri": "/", "rel": "self" },
-     *   { "id": "deleteDog", "method": "DELETE", "uri": "/dogs/{dog}", "rel": "item" }
+     *   {
+     *    "title": "Get a todo.",
+     *    "rel": "getTodo",
+     *    "method": "GET",
+     *    "uri": "/todos/{id}"
+     *   },
+     *   {
+     *    "title": "Create a todo.",
+     *    "rel": "createTodo",
+     *    "method": "POST",
+     *    "uri": "/todos",
+     *    "headers": {
+     *     "content-type": "application/json"
+     *    },
+     *    "body": [
+     *     {
+     *      "title": "Title of the todo.",
+     *      "name": "title",
+     *      "value": "",
+     *      "type": "text"
+     *     },
+     *     {
+     *      "title": "Due date of the todo.",
+     *      "name": "due",
+     *      "value": "",
+     *      "type": "date"
+     *     },
+     *     {
+     *      "title": "Description of the todo.",
+     *      "name": "description",
+     *      "value": "",
+     *      "type": "text"
+     *     }
+     *    ]
+     *   }
      * ]
      *
      * @return {string} representing NavAL.
@@ -358,11 +410,7 @@
      * @see Naval.encode
      *
      * @return {Array} representing hypermedia controls.
-     * @example
-     * [
-     *   { "id": "entry", "method": "GET", "uri": "/", "rel": "self" },
-     *   { "id": "deleteDog", "method": "DELETE", "uri": "/dogs/{dog}", "rel": "item" }
-     * ]
+     * @see Naval.encode
      */
     Naval.decode = function (naval) {
         try {
@@ -377,6 +425,8 @@
      * A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical
      * resource.
      * @example "http://www.google.com:80/search?query=text#result"
+     *
+     * @see http://tools.ietf.org/html/rfc3986
      *
      * @return {Uri}
      * @constructor
@@ -421,6 +471,7 @@
      * meaning that its separator was not present in the reference, and a component that is empty,
      * meaning that the separator was present and was immediately followed by the next component
      * separator or the end of the reference.
+     *
      * @see http://tools.ietf.org/html/rfc3986#section-5.3
      *
      * @param uri {Object} representing the Uniform Resource Identifier (URI).
@@ -502,21 +553,14 @@
      *
      * Going in the opposite direction, we can recreate a URI reference from its components by using the algorithm of
      * Section 5.3.
+     *
      * @see http://tools.ietf.org/html/rfc3986#appendix-B
      *
      * @param uri {string} representing the Uniform Resource Identifier (URI).
-     * @example "http://www.google.com:80/search?query=text#result"
+     * @see Uri.encode
      *
      * @return {Object} representing the Uniform Resource Identifier (URI).
-     * @example
-     * {
-     *   "uri": "http://www.google.com:80/search?query=text#result",
-     *   "scheme": "http",
-     *   "authority": "www.google.com:80",
-     *   "path": "/search",
-     *   "query": "query=text",
-     *   "fragment": "result"
-     * }
+     * @see Uri.encode
      */
     Uri.decode = function (uri) {
         uri = typeof uri === 'string' ? uri : '';
@@ -571,36 +615,92 @@
      *
      * @see http://en.wikipedia.org/wiki/Application_programming_interface#Web_APIs
      *
-     * @param api {Object} representing a web API. It is optional.
+     * @param api {Object} representing a web API.
      * @example
      * {
-     *   "apis": [
+     *  "cors": ["*"],
+     *  "apis": [
+     *   {
+     *    "id": "requestLog",
+     *    "middleware": "request"
+     *   },
+     *   {
+     *    "title": "Get all todos.",
+     *    "id": "getTodos",
+     *    "method": "GET",
+     *    "uri": "/todos"
+     *   },
+     *   {
+     *    "title": "Get a todo.",
+     *    "id": "getTodo",
+     *    "method": "GET",
+     *    "uri": "/todos/{id}"
+     *   },
+     *   {
+     *    "title": "Create a todo.",
+     *    "id": "createTodo",
+     *    "method": "POST",
+     *    "uri": "/todos",
+     *    "headers": {
+     *     "content-type": "application/json"
+     *    },
+     *    "body": [
      *     {
-     *       "id": "requestLog",
-     *       "middleware": "request"
+     *      "title": "Title of the todo.",
+     *      "name": "title",
+     *      "value": "",
+     *      "type": "text"
      *     },
      *     {
-     *       "id": "entry",
-     *       "method": "GET",
-     *       "uri": "/",
-     *       "headers": { "host": "hello.hapi.co", "accept": "multipart/nav-data" }
+     *      "title": "Due date of the todo.",
+     *      "name": "due",
+     *      "value": "",
+     *      "type": "date"
      *     },
      *     {
-     *       "id": "createDog",
-     *       "method": "POST",
-     *       "uri": "/dogs",
-     *       "headers": {
-     *         "host": "hello.hapi.co",
-     *         "accept": "multipart/nav-data",
-     *         "content-type": "application/vnd.hapi.dog+json"
-     *       },
-     *       "body": [ { "id": "name", "value": "", } ]
-     *     },
-     *     {
-     *       "id": "responseLog",
-     *       "middleware": "response"
+     *      "title": "Description of the todo.",
+     *      "name": "description",
+     *      "value": "",
+     *      "type": "text"
      *     }
-     *   ]
+     *    ]
+     *   },
+     *   {
+     *    "title": "Upsert a todo.",
+     *    "id": "upsertTodo",
+     *    "method": "PUT",
+     *    "uri": "/todos/{id}",
+     *    "headers": {
+     *     "content-type": "application/json"
+     *    },
+     *    "body": [
+     *     {
+     *      "title": "Title of the todo.",
+     *      "name": "title",
+     *      "value": "",
+     *      "type": "text"
+     *     },
+     *     {
+     *      "title": "Due date of the todo.",
+     *      "name": "due",
+     *      "value": "",
+     *      "type": "date"
+     *     },
+     *     {
+     *      "title": "Description of the todo.",
+     *      "name": "description",
+     *      "value": "",
+     *      "type": "text"
+     *     }
+     *    ]
+     *   },
+     *   {
+     *    "title": "Delete a todo.",
+     *    "id": "deleteTodo",
+     *    "method": "DELETE",
+     *    "uri": "/todos/{id}"
+     *   }
+     *  ]
      * }
      *
      * @return {Api}
@@ -630,30 +730,60 @@
     /**
      * Create a new instance of Api.
      *
-     * @param api {Object} representing a web API. It is optional.
+     * @param api {Object} representing a web API.
      * @see Api
      *
      * @return {Api}
-     * @see Api
      */
     Api.create = function (api) {
         return new Api(api);
     };
 
     /**
+     * Enter an API at its entry point resource.
      *
-     * @param uri
-     * @param callback
-     * @param api
-     * @return {*}
+     * @param uri {string} representing the Uniform Resource Identifier (URI).
+     * @example "http://www.google.com/"
+     *
+     * @param callback {function} to be invoked when the entry point request succeeds or fails.
+     * @example
+     * function (error, res) {
+     *  console.log('The agent is ' + JSON.stringify(this, null, ' '));
+     *  if (error) {
+     *   console.error(error);
+     *  } else {
+     *   console.log('The response is ' + JSON.stringify(res, null, ' '));
+     *  }
+     * }
+     *
+     * Error may be an instance of {Error}. Response may be an object. If either are an object, the other is null.
+     *
+     * @param api {Object} representing a web API.
+     * @see Api
+     *
+     * @return {Api}
      */
     Api.enter = function (uri, callback, api) {
         return Api.create(api).enter(uri, callback);
     };
 
     /**
+     * Enumerates each request middleware in the Api.
      *
-     * @param callback
+     * @example
+     * {
+     *  "id": "requestLog",
+     *  "middleware": "request"
+     * }
+     *
+     * Id must be a unique string. Middleware must be "request".
+     *
+     * @param callback {function} to be invoked when request middleware is encountered.
+     * @example
+     * function (middleware) {
+     *  console.log(JSON.stringify(middleware));
+     * }
+     *
      * @return {Api}
      */
     Api.prototype.eachReqMiddleware = function (callback) {
@@ -671,8 +801,22 @@
     };
 
     /**
+     * Enumerates each response middleware in the Api.
      *
-     * @param callback
+     * @example
+     * {
+     *  "id": "responseLog",
+     *  "middleware": "response"
+     * }
+     *
+     * Id must be a unique string. Middleware must be "response".
+     *
+     * @param callback {function} to be invoked when response middleware is encountered.
+     * @example
+     * function (middleware) {
+     *  console.log(JSON.stringify(middleware));
+     * }
+     *
      * @return {Api}
      */
     Api.prototype.eachResMiddleware = function (callback) {
@@ -690,8 +834,32 @@
     };
 
     /**
+     * Enumerates each api route in the Api.
      *
-     * @param callback
+     * @example
+     * {
+     *  "title": "Get all todos.",
+     *  "id": "getTodos",
+     *  "method": "GET",
+     *  "uri": "/todos"
+     * }
+     * or
+     * {
+     *  "title": "Get all todos.",
+     *  "rel": "getTodos",
+     *  "method": "GET",
+     *  "uri": "/todos"
+     * }
+     *
+     * Id, rel, method, and uri must be a string.
+     * Id would be used in a server context. Rel would be used in a client context. If one exists, the other does not.
+     *
+     * @param callback {function} to be invoked when an api route is encountered.
+     * @example
+     * function (api) {
+     *  console.log(JSON.stringify(api));
+     * }
+     *
      * @return {Api}
      */
     Api.prototype.eachApi = function (callback) {
@@ -710,6 +878,36 @@
         return that;
     };
 
+    /**
+     * CORS middleware that introspects a Node {IncomingMessage} for CORS semantics.
+     *
+     * @param req {IncomingMessage} object created by http.Server.
+     * @see http://nodejs.org/api/http.html#http_http_incomingmessage
+     *
+     * @param cors {Object} that receives the CORS semantics of the current request.
+     * @example
+     * {
+     *  origin: 'http://www.google.com',
+     *  method: '',
+     *  headers: '',
+     *  preflight: false,
+     *  simple: true,
+     *  all: true,
+     *  one: false,
+     *  allow: true
+     * }
+     *
+     * Origin will be the value of the Origin header defined in the request.
+     * Method will be the value of the Access-Control-Request-Method header defined in the request.
+     * Headers will be the value of the Access-Control-Request-Headers header defined in the request.
+     * If Access-Control-Request-Method exists in the request, it is a Preflight request. The method is OPTIONS.
+     * If Access-Control-Request-Method does not exist in the request, it is a Simple request. The method remains.
+     * If a cors array was defined in the Object representing a web API as ["*"], then all origins are allowed.
+     * If a cors array was defined in the Object representing a web API as ["origin"], then one origin is allowed.
+     * If a cors array was not defined in the Object representing a web API, then no origins are allowed.
+     *
+     * @return {Api}
+     */
     Api.prototype.incomingMessageCors = function (req, cors) {
         var that = this;
         if (!!req && typeof req === 'object' && !!cors && typeof cors === 'object') {
@@ -750,6 +948,27 @@
         return that;
     };
 
+    /**
+     * CORS middleware that sets relevant response headers based on CORS request semantics.
+     *
+     * @param res {ServerResponse} object created by http.Server.
+     * @see http://nodejs.org/api/http.html#http_class_http_serverresponse
+     *
+     * @param cors {Object} that receives the CORS semantics of the current request.
+     * @example
+     * {
+     *  origin: 'http://www.google.com',
+     *  method: '',
+     *  headers: '',
+     *  preflight: false,
+     *  simple: true,
+     *  all: true,
+     *  one: false,
+     *  allow: true
+     * }
+     *
+     * @return {Api}
+     */
     Api.prototype.serverResponseCors = function (res, cors) {
         var that = this;
         if (!!res && typeof res === 'object' && !!cors && typeof cors === 'object') {
@@ -827,19 +1046,25 @@
     };
 
     /**
-     * Encode {Array} of hypermedia controls to a hypermedia media type.
+     * Hypermedia middleware that augments a server response with hypermedia semantics without modifying the original
+     * intended encoding of the response. It allows for the introduction of hypermedia semantics to any existing
+     * media type regardless of type (text, binary, etc).
+     *
+     * @param res {ServerResponse} object created by http.Server.
+     * @see http://nodejs.org/api/http.html#http_class_http_serverresponse
      *
      * @param selectors {Array} of hypermedia selectors. Use a {string} identifier to select an API endpoint intact.
-     * Use an {Object} with an 'id' field to select an API endpoint and make modify fields before encoding.
+     * Use an {Object} with an 'id' field to select an API endpoint and modify fields before encoding.
      * @example
      * [
-     *   {
-     *     'id': 'createDog',
-     *     'rel': 'item',
-     *     'method': 'PUT',
-     *     'uri': '/dogs/{dog}'
-     *   },
-     *   'entry'
+     *  "entry",
+     *  {
+     *   "title": "Get all todos.",
+     *   "rel": 'collection',
+     *   "id": "getTodos",
+     *   "method": "GET",
+     *   "uri": "/todos"
+     *  }
      * ]
      *
      * @return {Api}
@@ -920,6 +1145,47 @@
         return that;
     };
 
+    /**
+     * Transacts protocol requests using any supported request response protocol. Default is HTTP.
+     * Normalizes request and response interfaces between Node.JS and XMLHttpRequest runtime environments.
+     *
+     * @param req {Object} that represents a protocol request.
+     * @example
+     * {
+     *  method: 'GET',
+     *  uri: 'http://127.0.0.1:80/',
+     *  headers: {},
+     *  body: '',
+     *  username: null,
+     *  password: null,
+     *  withCredentials: false
+     * }
+     *
+     * In the depicted example, the HTTP protocol expects particular fields. Every field has reasonable defaults.
+     * Method must be a method defined within the protocol. The default is GET.
+     * URI must be an absolute Uniform Resource Identifier string. The default is http://127.0.0.1:80/.
+     * Headers must be an object of header field name and header field value pairs. The default is {}.
+     * Body must be an encoded string body. The default is "".
+     * Username must be a username string. The default is null.
+     * Password must be a password string. The default is null.
+     * WithCredentials must be a boolean. The default is false. WithCredentials is necessary for CORS requests that
+     * require authentication.
+     *
+     * @param callback {function} to be invoked when the request succeeds or fails.
+     * @example
+     * function (error, res) {
+     *  console.log('The agent is ' + JSON.stringify(this, null, ' '));
+     *  if (error) {
+     *   console.error(error);
+     *  } else {
+     *   console.log('The response is ' + JSON.stringify(res, null, ' '));
+     *  }
+     * }
+     *
+     * Error may be an instance of {Error}. Response may be an object. If either are an object, the other is null.
+     *
+     * @return {Api}
+     */
     Api.prototype.request = function (req, callback) {
         var that = this;
         req = !!req && typeof req === 'object' ? req : {};
@@ -1108,6 +1374,43 @@
         return that;
     };
 
+    /**
+     * Transacts protocol requests using any supported request response protocol. Default is HTTP.
+     * Normalizes request and response interfaces between Node.JS and XMLHttpRequest runtime environments.
+     *
+     * This method wraps the normal request method to assist with the media type multipart/nav-data.
+     * It asks the origin server for multipart/nav-data responses with an Accept header.
+     * It decodes the response if it was multipart/nav-data, and pulls out the hypermedia semantics from the response
+     * and builds a "DOM".
+     * This method allows for unwrapping responses that were augmented with hypermedia semantics. This allows the client
+     * to have a hypermedia DOM accessible and still retrieve the response as if the media type of the response had
+     * still been the intended type defined in their response handler.
+     *
+     * @param req {Object} that represents a protocol request.
+     * @example
+     * {
+     *  method: 'GET',
+     *  uri: 'http://127.0.0.1:80/',
+     *  headers: {},
+     *  body: '',
+     *  username: null,
+     *  password: null,
+     *  withCredentials: false
+     * }
+     *
+     * @param callback {function} to be invoked when the request succeeds or fails.
+     * @example
+     * function (error, res) {
+     *  console.log('The agent is ' + JSON.stringify(this, null, ' '));
+     *  if (error) {
+     *   console.error(error);
+     *  } else {
+     *   console.log('The response is ' + JSON.stringify(res, null, ' '));
+     *  }
+     * }
+     *
+     * @return {Api}
+     */
     Api.prototype.requestNavData = function (req, callback) {
         var that = this;
         req = !!req && typeof req === 'object' ? req : {};
@@ -1150,6 +1453,13 @@
         return that;
     };
 
+    /**
+     * Determines if an API route is defined by the Api instance in a server context.
+     * Determines if a hypermedia affordance is defined by the Api instance in a client context.
+     *
+     * @param req {string} id or rel depending on whether the context is a server or client environment.
+     * @return {object} representing an API route or hypermedia affordance depending on context; otherwise, null.
+     */
     Api.prototype.possible = function (req) {
         var that = this,
             possible = null;
@@ -1163,6 +1473,27 @@
         return possible;
     };
 
+    /**
+     * Enter an API at its entry point resource.
+     *
+     * @param uri {string} representing the Uniform Resource Identifier (URI).
+     * @example "http://www.google.com/"
+     *
+     * @param callback {function} to be invoked when the entry point request succeeds or fails.
+     * @example
+     * function (error, res) {
+     *  console.log('The agent is ' + JSON.stringify(this, null, ' '));
+     *  if (error) {
+     *   console.error(error);
+     *  } else {
+     *   console.log('The response is ' + JSON.stringify(res, null, ' '));
+     *  }
+     * }
+     *
+     * Error may be an instance of {Error}. Response may be an object. If either are an object, the other is null.
+     *
+     * @return {Api}
+     */
     Api.prototype.enter = function (uri, callback) {
         var that = this;
         if (that.protocol === 'http') {
@@ -1190,6 +1521,40 @@
         return that;
     };
 
+    /**
+     * Follow a hypermedia affordance based on its rel.
+     *
+     * @param selector {string|object} representing a relation string or object containing a relation field.
+     * @example
+     * "upsertTodo"
+     * or
+     * {
+     *  rel: 'upsertTodo',
+     *  uri: {
+     *   id: '0'
+     *  },
+     *  body: {
+     *   title: 'Grocery Shopping.',
+     *   due: '2014-08-17',
+     *   description: 'Buy stuff, yo.'
+     *  }
+     * }
+     *
+     * @param callback {function} to be invoked when the follow request succeeds or fails.
+     * @example
+     * function (error, res) {
+     *  console.log('The agent is ' + JSON.stringify(this, null, ' '));
+     *  if (error) {
+     *   console.error(error);
+     *  } else {
+     *   console.log('The response is ' + JSON.stringify(res, null, ' '));
+     *  }
+     * }
+     *
+     * Error may be an instance of {Error}. Response may be an object. If either are an object, the other is null.
+     *
+     * @return {Api}
+     */
     Api.prototype.follow = function (selector, callback) {
         var that = this;
         selector = typeof selector === 'string' ? { rel: selector } : selector;
