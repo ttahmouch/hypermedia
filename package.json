@@ -1,21 +1,21 @@
 {
     "name": "hypermedia",
     "description": "Node.JS and XHR Hypermedia Client and Server.",
-    "author": "Tony Tahmouch <ttahmouch@gmail.com>",
+    "author": "Tony Tahmouch <tony@hapi.co>",
     "licenses": [
         {
             "type": "MIT",
-            "url": "https://github.com/ttahmouch/hypermedia/blob/master/LICENSE.md"
+            "url": "https://github.com/coastjs/hypermedia/blob/master/LICENSE.md"
         }
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": "index.js",
     "scripts": {
         "test": "echo 'Error: no test specified' && exit 1"
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/ttahmouch/hypermedia.git"
+        "url": "git://github.com/coastjs/hypermedia.git"
     },
     "keywords": [
         "affordance",
@@ -35,6 +35,6 @@
         "uri"
     ],
     "bugs": {
-        "url": "https://github.com/ttahmouch/hypermedia/issues"
+        "url": "https://github.com/coastjs/hypermedia/issues"
     }
 }
