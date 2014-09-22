@@ -867,10 +867,10 @@
         if (typeof callback === 'function') {
             that.apis.forEach(function (api) {
                 if (!!api && typeof api === 'object') {
-                    if (typeof api.id === 'string' || typeof api.rel === 'string' &&
-                        typeof api.method === 'string' &&
-                        typeof api.uri === 'string') {
-                        callback(api);
+                    if (typeof api.id === 'string' || typeof api.rel === 'string') {
+                        if (typeof api.method === 'string' && typeof api.uri === 'string') {
+                            callback(api);
+                        }
                     }
                 }
             });
