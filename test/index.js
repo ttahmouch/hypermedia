@@ -266,8 +266,12 @@
     req.cors.credential = true;
     api.outgoingMessageCors(req, res);
 
+    assert.ok(res.getHeader('access-control-allow-origin') === 'http://foo.example', 'Res._headers was modified improperly.');
+    assert.ok(res.getHeader('access-control-allow-credentials') === 'true', 'Res._headers was modified improperly.');
+
     /**
      * Just keep swimming...
      */
+    console.log('Just keep swimming. Nothing to see here.');
 
 })();
