@@ -1,0 +1,32 @@
+{
+    "id": "Simple Stupid Hypermedia API",
+    "title": "Short text saving service.",
+    "debug": true,
+    "protocol": "http",
+    "hostname": "0.0.0.0",
+    "port": "80",
+    "cors": ["*"],
+    "apis": [
+        {
+            "id": "logRequest",
+            "title": "Log a Request."
+        },
+        {
+            "id": "createNote",
+            "title": "Create a Note.",
+            "method": "PUT",
+            "uri": "/notes/:note",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "body": [
+                {
+                    "name": "title",
+                    "title": "Title of the Note.",
+                    "value": "Buy bread.",
+                    "type": "text"
+                }
+            ]
+        }
+    ]
+}
