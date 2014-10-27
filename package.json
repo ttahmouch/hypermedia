@@ -3,7 +3,7 @@
     "description": "Open-source, full-stack, node.js and browser utility library for Javascript web api development.",
     "author": "Tony Tahmouch <tony@hapi.co>",
     "license": "MIT",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "main": "index.js",
     "scripts": {
         "test": "node ./test"
