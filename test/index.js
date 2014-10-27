@@ -85,8 +85,8 @@
             {
                 "id": "createNote",        // REQUIRED. Identifies the API. Default: undefined
                 "title": "Create a Note.", // OPTIONAL. Describes the API. Default: undefined
-                "method": "PUT",           // OPTIONAL. Describes the required protocol method. Default: undefined
-                "uri": "/notes/:note",     // OPTIONAL. Describes the required route with optional params. Default: undefined
+                "method": "PUT",           // REQUIRED. Describes the required protocol method. Default: undefined
+                "uri": "/notes/:note",     // REQUIRED. Describes the required route with optional params. Default: undefined
                 "headers": {               // OPTIONAL. Describes the required protocol headers. Default: undefined
                     "content-type": "application/json"
                 },
